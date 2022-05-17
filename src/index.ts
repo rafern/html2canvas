@@ -14,6 +14,7 @@ export type Options = CloneOptions &
         backgroundColor: string | null;
         foreignObjectRendering: boolean;
         removeContainer?: boolean;
+        dimensionsOutput?: { width: number, height: number };
     };
 
 const html2canvas = (element: HTMLElement, options: Partial<Options> = {}): Promise<HTMLCanvasElement> => {
@@ -99,6 +100,11 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
         isBodyElement(clonedElement) || isHTMLElement(clonedElement)
             ? parseDocumentSize(clonedElement.ownerDocument)
             : parseBounds(context, clonedElement);
+
+    if (opts.dimensionsOutput) {
+        opts.dimensionsOutput.width = width;
+        opts.dimensionsOutput.height = height;
+    }
 
     const backgroundColor = parseBackgroundColor(context, clonedElement, opts.backgroundColor);
 
