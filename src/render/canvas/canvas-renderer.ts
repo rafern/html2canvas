@@ -47,6 +47,7 @@ import {DIRECTION} from '../../css/property-descriptors/direction';
 
 export type RenderConfigurations = RenderOptions & {
     backgroundColor: Color | null;
+    restoreContext?: boolean;
 };
 
 export interface RenderOptions {
@@ -70,6 +71,11 @@ export class CanvasRenderer extends Renderer {
         super(context, options);
         this.canvas = options.canvas ? options.canvas : document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
+
+        if (options.restoreContext) {
+            this.ctx.save();
+        }
+
         if (!options.canvas) {
             this.canvas.width = Math.floor(options.width * options.scale);
             this.canvas.height = Math.floor(options.height * options.scale);
@@ -906,6 +912,11 @@ export class CanvasRenderer extends Renderer {
 
         await this.renderStack(stack);
         this.applyEffects([]);
+
+        if (this.options.restoreContext) {
+            this.ctx.restore();
+        }
+
         return this.canvas;
     }
 }
